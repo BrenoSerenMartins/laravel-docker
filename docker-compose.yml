@@ -1,0 +1,74 @@
+## version attribute removed as it is obsolete
+
+services:
+  webserver:
+    image: nginx:alpine
+    container_name: laravel-webserver
+    working_dir: /var/www
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+      - ./var/www:/var/www
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - php-fpm
+    networks:
+      - laravel
+
+  php-fpm:
+    build:
+      context: ./php
+    container_name: laravel-php
+    working_dir: /var/www
+    volumes:
+      - ./var/www:/var/www
+      - ./php/config/php.ini:/usr/local/etc/php/php.ini
+    env_file:
+      - .env
+    environment:
+      - COMPOSER_MEMORY_LIMIT=-1
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:8.0
+    container_name: laravel-mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./var/lib/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=laravel
+      - MYSQL_USER=laravel
+      - MYSQL_PASSWORD=laravel
+    networks:
+      - laravel
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: laravel-phpmyadmin
+    ports:
+      - 8080:80
+    environment:
+      - PMA_HOST=mysql
+      - PMA_USER=laravel
+      - PMA_PASSWORD=laravel
+    depends_on:
+      - mysql
+    networks:
+      - laravel
+
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: laravel-mailhog
+    ports:
+      - "8025:8025"
+    networks:
+      - laravel
+
+networks:
+  laravel:
+    driver: bridge

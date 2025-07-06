@@ -1,0 +1,28 @@
+# Ignorar subdiretórios e arquivos
+nginx/**
+!nginx
+
+node/**
+!node
+
+php/**
+!php
+!php/Dockerfile
+
+scripts/**
+!scripts
+!scripts/*.sh
+!scripts/*.yml
+
+var/**
+!var
+
+# Não ignorar arquivos de configuração do Docker
+!docker-compose.yml
+!docker-compose.override.yml
+
+# Ignorar arquivo .env
+.env
+
+#Ignorar diretorio .idea
+.idea/
