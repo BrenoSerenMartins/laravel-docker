@@ -1,37 +1,52 @@
 # Laravel Docker Base
 
-Este repositório fornece uma base de Docker para projetos Laravel. Ele inclui um conjunto de imagens e configurações para criar um ambiente de desenvolvimento completo para Laravel.
-
-## Scripts
-
-Este repositório inclui dois scripts úteis para gerenciar projetos Laravel:
-
-* `create-project.sh`: cria um novo projeto Laravel no diretório `var/www/nome-do-projeto`.
-* `remove-project.sh`: remove um projeto Laravel existente no diretório `var/www/nome-do-projeto`.
+Este repositório fornece uma base de Docker para projetos Laravel. Ele inclui um conjunto de imagens e configurações para criar um ambiente de desenvolvimento completo e portátil para Laravel.
 
 ## Como usar
 
-1. Clone este repositório para o seu diretório de trabalho.
-2. Execute o comando `docker-compose up -d` para iniciar o ambiente de desenvolvimento.
-3. Use o script `create-project.sh` para criar um novo projeto Laravel.
-4. Use o script `remove-project.sh` para remover um projeto Laravel existente.
+### 1. Iniciar o Ambiente
+Para iniciar todos os serviços (Nginx, PHP, MySQL, etc.), execute:
+```bash
+docker-compose up -d
+```
 
-## Configuração
+### 2. Criar um Novo Projeto
+Use o script interativo para criar um novo projeto Laravel. O nome do projeto deve conter apenas letras minúsculas, números e hífens.
+```bash
+./scripts/create-new-project.sh <nome-do-projeto>
+```
+O script irá configurar tudo automaticamente, incluindo o banco de dados e o acesso local via `http://<nome-do-projeto>.local`.
 
-Este repositório inclui as seguintes configurações:
+### 3. Remover um Projeto
+Para remover um projeto, use o script de remoção. Ele pedirá confirmação antes de apagar os arquivos, banco de dados e configuração.
+```bash
+./scripts/remove-project.sh <nome-do-projeto>
+```
 
-* `docker-compose.yml`: define as imagens e configurações para o ambiente de desenvolvimento.
-* `nginx.conf`: configura o servidor Nginx para servir os projetos Laravel.
-* `php.ini`: configura o PHP para os projetos Laravel.
+## Interagindo com os Projetos
 
-## Diretórios
+### Executando comandos Artisan
+Para executar comandos `artisan` em um projeto específico, use o `docker-compose run`:
+```bash
+docker-compose run --rm --workdir /var/www/<nome-do-projeto> php-fpm php artisan make:model NomeDoModel
+```
 
-Este repositório inclui os seguintes diretórios:
+### Executando o Composer
+Para executar o `composer` em um projeto, o processo é similar:
+```bash
+docker-compose run --rm --workdir /var/www/<nome-do-projeto> php-fpm composer update
+```
 
-* `var/www`: diretório onde os projetos Laravel serão criados.
-* `scripts`: diretório que contém os scripts `create-project.sh` e `remove-project.sh`.
+### Acesso ao Banco de Dados
+Você pode se conectar ao banco de dados MySQL a partir de um cliente de banco de dados local (DBeaver, DataGrip, etc.) usando as seguintes credenciais:
 
-## Licensa
+- **Host**: `127.0.0.1`
+- **Porta**: `3306`
+- **Usuário**: `laravel`
+- **Senha**: `laravel`
+- **Database**: O nome do banco de dados é `laravel_<nome-do-projeto>` (com hífens do nome do projeto substituídos por underscores).
+
+## Licença
 
 Este repositório é licenciado sob a licença MIT. Veja o arquivo `LICENSE` para mais informações.
 
